@@ -64,7 +64,7 @@ class IPWebCam(object):
 
 		# hull = cv.convexHull(contours, returnPoints=False)
 		# defects = cv.convexityDefects(contours, hull)
-		resize = cv2.resize(fgMask, (640, 480), interpolation = cv2.INTER_LINEAR) 
+		resize = cv2.resize(fgMask, (1280, 720), interpolation = cv2.INTER_LINEAR) 
 		frame_flip = cv2.flip(resize,1)
 		ret, jpeg = cv2.imencode('.jpg', frame_flip)
 		return jpeg.tobytes()
