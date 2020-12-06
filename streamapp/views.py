@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http.response import StreamingHttpResponse
-from streamapp.camera import  IPWebCam
+from streamapp.camera import IPWebCam
+import cv2
+import numpy as np
 # Create your views here.
 
 
