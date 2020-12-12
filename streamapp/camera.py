@@ -29,12 +29,9 @@ class IPWebCam(object):
 		imgResp = urllib.request.urlopen(self.url)
 		imgNp = np.array(bytearray(imgResp.read()), dtype=np.uint8)
 		img = cv2.imdecode(imgNp,-1)
-
-		
 		# We are using Motion JPEG, but OpenCV defaults to capture raw images,
 		# so we must encode it into JPEG in order to correctly display the
 		# video stream
-
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		blur = cv2.GaussianBlur(gray, (7, 7), 2)
 		canny = cv2.Canny(blur, 30, 30)
@@ -42,30 +39,25 @@ class IPWebCam(object):
 
 		faces_detected = face_detection_webcam.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
 		for (x, y, w, h) in faces_detected:
-			# cv2.rectangle(fgMask, pt1=(x, y), pt2=(x + w, y + h), color=(255, 0, 0), thickness=2)
 			face = fgMask[y:y + h, x:x + w]
 			fgMask[y:y + h, x:x + w] = np.zeros_like(face)
 
-		
-	
-		# hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-		# lower_skin_hsv = np.array([0, 48, 80], dtype=np.uint8)
-		# upper_skin_hsv = np.array([20, 255, 255], dtype=np.uint8)
-		# skin_region_hsv = cv2.inRange(hsv_img, lower_skin_hsv, upper_skin_hsv)
-		# blurred = cv2.blur(skin_region_hsv, (2,2))
-		# ret,thresh = cv2.threshold(blurred,0,255,cv2.THRESH_BINARY)
-		
-		# contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-		#cv2.drawContours(img, [contours], -1, (255,255,0), 2)
 
-		# hull = cv2.convexHull(contours)
-		# cv.drawContours(img, [hull], -1, (0, 255, 255), 2)
-
-		# hull = cv.convexHull(contours, returnPoints=False)
-		# defects = cv.convexityDefects(contours, hull)
-		resize = cv2.resize(fgMask, (1280, 720), interpolation = cv2.INTER_LINEAR) 
+		resize = cv2.resize(img, (1280, 720), interpolation = cv2.INTER_LINEAR) 		
 		frame_flip = cv2.flip(resize,1)
+		# font 
+		font = cv2.FONT_HERSHEY_SIMPLEX 
+		# org 
+		org = (50, 650) 
+		# fontScale 
+		fontScale = 2
+		#Color in BGR 
+		color = (255, 255, 255) 
+		# Line thickness of 2 px 
+		thickness = 4 
+		sign_text = cv2.putText(frame_flip, 'Sample ASL Interpreted Text', org, font,  
+						fontScale, color, thickness, cv2.LINE_AA) 
 		ret, jpeg = cv2.imencode('.jpg', frame_flip)
 		return jpeg.tobytes()
 

@@ -3,6 +3,11 @@ h1 {
     text-align: center;
 }
 
+h2 {
+    color:  #7f001c;
+    text-align: center;
+}
+
 .center {
     display: block;
     margin-left: auto;
@@ -27,12 +32,4 @@ body {
     float: left;  
 }
 
-form {
-    text-align: center;
-}
 
-input[type=text] {
-    width: 30%;
-    margin: 8px 0;
-    box-sizing: border-box;
-  }
