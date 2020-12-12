@@ -6,6 +6,8 @@ import imutils
 import cv2,os,urllib.request
 import numpy as np
 from django.conf import settings
+from streamapp.boundingBox import *
+
 face_detection_videocam = cv2.CascadeClassifier(os.path.join(
 			settings.BASE_DIR,'opencv_haarcascade_data/haarcascade_frontalface_default.xml'))
 face_detection_webcam = cv2.CascadeClassifier(os.path.join(
@@ -21,6 +23,7 @@ backSub = cv2.createBackgroundSubtractorMOG2(history=60, varThreshold=15, detect
 class IPWebCam(object):
 	def __init__(self):
 		self.url = "http://10.0.0.240:8080/shot.jpg"
+		self.counter = 1 
 
 	def __del__(self):
 		cv2.destroyAllWindows()
@@ -42,13 +45,8 @@ class IPWebCam(object):
 			face = fgMask[y:y + h, x:x + w]
 			fgMask[y:y + h, x:x + w] = np.zeros_like(face)
 
-<<<<<<< HEAD
-
-
-		resize = cv2.resize(img, (1280, 720), interpolation = cv2.INTER_LINEAR) 		
-=======
-		resize = cv2.resize(img, (1280, 720), interpolation = cv2.INTER_LINEAR) 
->>>>>>> 3f33a0a1b93a321ea3cf6d0de79a36719cc34f04
+		resize = cv2.resize(img, (1280, 720), interpolation = cv2.INTER_LINEAR) 	
+		fgMask = cv2.resize(fgMask, (1280, 720), interpolation = cv2.INTER_LINEAR) 	
 		frame_flip = cv2.flip(resize,1)
 		# font 
 		font = cv2.FONT_HERSHEY_SIMPLEX 
@@ -60,9 +58,17 @@ class IPWebCam(object):
 		color = (255, 255, 255) 
 		# Line thickness of 2 px 
 		thickness = 4 
-		sign_text = cv2.putText(frame_flip, 'Sample ASL Interpreted Text', org, font,  
-						fontScale, color, thickness, cv2.LINE_AA) 
-		ret, jpeg = cv2.imencode('.jpg', frame_flip)
+		cv2.putText(frame_flip, 'Sample ASL Interpreted Text', org, font,  
+						fontScale, color, thickness, cv2.LINE_AA)
+		left, right, top, bottom = initBoundingBox(frame_flip)
+		imgBox = drawBoundingBox(frame_flip, left, right, top, bottom)
+		fgMask_flip = cv2.flip(fgMask,1)
+		boundingBox = getBoxAsImage(fgMask_flip, left, right, top, bottom)
+		if self.counter > 30:
+			cv2.imwrite('boundedHand.jpg', boundingBox) 
+			self.counter = 0
+		self.counter += 1
+		ret, jpeg = cv2.imencode('.jpg', imgBox)
 		return jpeg.tobytes()
 
 

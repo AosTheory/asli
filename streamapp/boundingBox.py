@@ -1,6 +1,5 @@
 # Bounding box functionality
 
-from skimage.measure import compare_ssim
 import cv2
 import numpy as np
 
