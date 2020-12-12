@@ -11,10 +11,10 @@ face_detection_videocam = cv2.CascadeClassifier(os.path.join(
 face_detection_webcam = cv2.CascadeClassifier(os.path.join(
 			settings.BASE_DIR,'opencv_haarcascade_data/haarcascade_frontalface_default.xml'))
 # load our serialized face detector model from disk
-prototxtPath = os.path.sep.join([settings.BASE_DIR, "face_detector/deploy.prototxt"])
-weightsPath = os.path.sep.join([settings.BASE_DIR,"face_detector/res10_300x300_ssd_iter_140000.caffemodel"])
+prototxtPath = os.path.sep.join([settings.BASE_DIR, "models/deploy.prototxt"])
+weightsPath = os.path.sep.join([settings.BASE_DIR,"models/res10_300x300_ssd_iter_140000.caffemodel"])
 faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
-maskNet = load_model(os.path.join(settings.BASE_DIR,'face_detector/mask_detector.model'))
+maskNet = load_model(os.path.join(settings.BASE_DIR,'models/mask_detector.model'))
 
 backSub = cv2.createBackgroundSubtractorMOG2(history=60, varThreshold=15, detectShadows=False)
 
@@ -42,9 +42,13 @@ class IPWebCam(object):
 			face = fgMask[y:y + h, x:x + w]
 			fgMask[y:y + h, x:x + w] = np.zeros_like(face)
 
+<<<<<<< HEAD
 
 
 		resize = cv2.resize(img, (1280, 720), interpolation = cv2.INTER_LINEAR) 		
+=======
+		resize = cv2.resize(img, (1280, 720), interpolation = cv2.INTER_LINEAR) 
+>>>>>>> 3f33a0a1b93a321ea3cf6d0de79a36719cc34f04
 		frame_flip = cv2.flip(resize,1)
 		# font 
 		font = cv2.FONT_HERSHEY_SIMPLEX 
