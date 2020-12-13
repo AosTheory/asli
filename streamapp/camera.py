@@ -24,6 +24,8 @@ backSub = cv2.createBackgroundSubtractorMOG2(history=60, varThreshold=15, detect
 
 letter_map = {1:"A",2:"B",3:"C",4:"D",5:"del",6:"E",7:"F",8:"G",9:"H",10:"I",11:"J",12:"K",13:"L",14:"M",15:"N",16:"nothing",17:"O",18:"P",
               19:"Q",20:"R",21:"S",22:"space",23:"T",24:"U",25:"V",26:"W",27:"X",28:"Y",29:"Z"}
+output_map = {0:1, 1:26, 2:15, 3:10, 4:22, 5:14, 6:8, 7:0, 8:12, 9:9, 10:23, 11:28, 12:13, 13:7, 14:21, 15:25, 16:6, 17:16, 18:19, 19:4 ,20:24, 21:17, 22:20, 23:2, 24:11, 25:18, 26:3, 27:5, 28:27}
+output_map = {value:key for key, value in output_map.items()}
 
 class IPWebCam(object):
 	def __init__(self):
@@ -51,17 +53,21 @@ class IPWebCam(object):
 		# video stream
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 		blur = cv2.GaussianBlur(gray, (5, 5), 0)
-		canny = cv2.Canny(blur, 50, 200, 3, L2gradient=True)
-		fgMask = backSub.apply(canny)
+		canny = cv2.Canny(blur, 50, 50, 3, L2gradient=True)
+		# cv2.imshow("boudingWindow", canny)
+		# cv2.waitKey(0)
+		# fgMask = backSub.apply(canny)
+		fgMask = canny
 
-		faces_detected = face_detection_webcam.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
-		for (x, y, w, h) in faces_detected:
-			face = fgMask[y:y + h, x:x + w]
-			fgMask[y:y + h, x:x + w] = np.zeros_like(face)
+		# faces_detected = face_detection_webcam.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
+		# for (x, y, w, h) in faces_detected:
+		# 	face = fgMask[y:y + h, x:x + w]
+		# 	fgMask[y:y + h, x:x + w] = np.zeros_like(face)
 
 		resize = cv2.resize(img, (1280, 720), interpolation = cv2.INTER_LINEAR) 	
 		fgMask = cv2.resize(fgMask, (1280, 720), interpolation = cv2.INTER_LINEAR) 	
 		frame_flip = cv2.flip(resize,1)
+
 		# font 
 		font = cv2.FONT_HERSHEY_SIMPLEX 
 		# org 
@@ -72,15 +78,14 @@ class IPWebCam(object):
 		color = (255, 255, 255) 
 		# Line thickness of 2 px 
 		thickness = 4 
-		# cv2.putText(frame_flip, 'Sample ASL Interpreted Text', org, font,  
-		# 				fontScale, color, thickness, cv2.LINE_AA)
+
 		left, right, top, bottom = initBoundingBox(frame_flip)
 		imgBox = drawBoundingBox(frame_flip, left, right, top, bottom)
 		fgMask_flip = cv2.flip(fgMask,1)
 		boundingBox = getBoxAsImage(fgMask_flip, left, right, top, bottom)
 		if self.counter > 30:
 			x = boundingBox
-			# cv2.imwrite('boundedHand.jpg', boundingBox)
+			# cv2.imwrite('boundedHand.jpg', x)
 			# x = image.img_to_array(boundingBox)
 			print(x.shape)
 			# boundingBox = np.tile(boundingBox,(1,1,3))
@@ -90,14 +95,16 @@ class IPWebCam(object):
 			x = np.repeat(x, 3, axis=2)
 			print(x.shape)
 			# x = edge_filter(boundingBox)
-			
 			y = self.model.predict(np.expand_dims(x/255.0, axis=0))
 			print(y[0])
 			y = np.argmax(y[0])
+			y = output_map[y]
 			self.sign_output += letter_map[y+1]
 			print(self.sign_output)
 			self.counter = 0
+
 		self.counter += 1
+		
 		cv2.putText(imgBox, self.sign_output, org, font,  
 				fontScale, color, thickness, cv2.LINE_AA)
 		ret, jpeg = cv2.imencode('.jpg', imgBox)

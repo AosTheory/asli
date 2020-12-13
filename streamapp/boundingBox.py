@@ -19,8 +19,10 @@ def preProcMask(image):
 # initializes and returns left, right, top and bottom of bounding box
 def initBoundingBox(frame):
     h, w = frame.shape[:2]
-    left = int(w/2)
-    right = int(w*9/10)
+    # left = int(w/2)
+    # right = int(w*9/10)
+    right = int(w/2)
+    left = int(w / 10)
     top = int(h/8)
     bottom = int(h*7/8)
     return left, right, top, bottom
@@ -40,8 +42,8 @@ def resizeImage(frame, width, height):
 def drawBoundingBox(frame, left, right, top, bottom):
     newFrame = frame.copy()
     textPos = (left, top-20)
-    cv2.putText(newFrame, "Signing Box", textPos, cv2.FONT_HERSHEY_PLAIN, 3, (0,255,0), 5)
-    cv2.rectangle(newFrame, (left, top), (right, bottom), (0, 255, 0), 3)
+    cv2.putText(newFrame, "Signing Box", textPos, cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255) , 5)
+    cv2.rectangle(newFrame, (left, top), (right, bottom), (28, 0, 127), 3)
     return newFrame
 
 
