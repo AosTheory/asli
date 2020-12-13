@@ -1,17 +1,17 @@
 from django.db import models
 
 import numpy as np
-from keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.python.keras.models import load_model, model_from_json
 from tensorflow.python.keras.initializers import glorot_uniform
-from keras.utils import CustomObjectScope
-from keras.applications.mobilenet import MobileNet
-from keras.preprocessing import image
-from keras.applications.mobilenet import preprocess_input
-from keras.applications import imagenet_utils
-from keras import backend as K
+from tensorflow.keras.utils import CustomObjectScope
+from tensorflow.keras.applications.mobilenet import MobileNet
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.mobilenet import preprocess_input
+from tensorflow.keras.applications import imagenet_utils
+from tensorflow.keras import backend as K
 
-import preprocessing
+import streamapp.preprocessing
 
 letter_map = {1:"A",2:"B",3:"C",4:"D",5:"del",6:"E",7:"F",8:"G",9:"H",10:"I",11:"J",12:"K",13:"L",14:"M",15:"N",16:"nothing",17:"O",18:"P",
               19:"Q",20:"R",21:"S",22:"space",23:"T",24:"U",25:"V",26:"W",27:"X",28:"Y",29:"Z"}
