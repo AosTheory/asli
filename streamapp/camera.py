@@ -22,8 +22,8 @@ maskNet = load_model(os.path.join(settings.BASE_DIR,'models/mask_detector.model'
 
 backSub = cv2.createBackgroundSubtractorMOG2(history=60, varThreshold=15, detectShadows=False)
 
-letter_map = {1:"A",2:"B",3:"C",4:"D",5:"del",6:"E",7:"F",8:"G",9:"H",10:"I",11:"J",12:"K",13:"L",14:"M",15:"N",16:"nothing",17:"O",18:"P",
-              19:"Q",20:"R",21:"S",22:"space",23:"T",24:"U",25:"V",26:"W",27:"X",28:"Y",29:"Z"}
+letter_map = {1:"A",2:"B",3:"C",4:"D",5:"del",6:"E",7:"F",8:"G",9:"H",10:"I",11:"J",12:"K",13:"L",14:"M",15:"N",16:"",17:"O",18:"P",
+              19:"Q",20:"R",21:"S",22:"_",23:"T",24:"U",25:"V",26:"W",27:"X",28:"Y",29:"Z"}
 output_map = {0:1, 1:26, 2:15, 3:10, 4:22, 5:14, 6:8, 7:0, 8:12, 9:9, 10:23, 11:28, 12:13, 13:7, 14:21, 15:25, 16:6, 17:16, 18:19, 19:4 ,20:24, 21:17, 22:20, 23:2, 24:11, 25:18, 26:3, 27:5, 28:27}
 output_map = {value:key for key, value in output_map.items()}
 
@@ -99,7 +99,12 @@ class IPWebCam(object):
 			print(y[0])
 			y = np.argmax(y[0])
 			y = output_map[y]
-			self.sign_output += letter_map[y+1]
+			if letter_map[y+1] == 'del':
+				self.sign_output = self.sign_output[:-1]
+			else:
+				self.sign_output += letter_map[y+1]
+			if self.sign_output[-3:] == "___":
+				self.sign_output = ""
 			print(self.sign_output)
 			self.counter = 0
 
